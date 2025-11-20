@@ -12,6 +12,7 @@ dotenv = "*"
 beautifulsoup4 = "*"
 requests = "*"
 mercadopago = "*"
+gunicorn = "*"
 
 [dev-packages]
 
