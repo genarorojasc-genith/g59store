@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Iniciar sesión{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-semibold mb-6 text-gray-900 text-center">
+    Iniciar sesión
+</h1>
+
+<form method="post" class="max-w-md mx-auto bg-white shadow-sm rounded-lg p-6 space-y-4">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="text-sm text-red-600 mb-2">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <div>
+        <label class="block text-sm font-medium mb-1">Correo electrónico</label>
+        {{ form.username }}
+        {% if form.username.errors %}
+            <p class="text-sm text-red-600">
+                {{ form.username.errors.0 }}
+            </p>
+        {% endif %}
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium mb-1">Contraseña</label>
+        {{ form.password }}
+        {% if form.password.errors %}
+            <p class="text-sm text-red-600">
+                {{ form.password.errors.0 }}
+            </p>
+        {% endif %}
+    </div>
+    
+    <button 
+        type="submit" 
+        class="w-full inline-flex justify-center items-center px-4 py-2
+               text-sm font-medium rounded-md text-white
+               bg-indigo-600 hover:bg-indigo-700 shadow-sm transition"
+    >
+        Entrar
+    </button>
+</form>
+
+<p class="mt-6 text-center text-sm text-gray-600">
+    ¿No tienes cuenta?
+    <a href="{% url 'registrarse' %}" class="text-emerald-600 hover:text-emerald-700 font-medium">
+        Regístrate aquí
+    </a>
+</p>
+{% endblock %}

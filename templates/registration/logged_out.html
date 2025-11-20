@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Sesión cerrada{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto text-center bg-white shadow-sm rounded-lg p-8">
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">
+        Has cerrado sesión correctamente.
+    </h2>
+    <a href="{% url 'productos:index' %}" 
+       class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition">
+        Volver al inicio
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load moneda %}
+
+{% block title %}Gestión de productos{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-semibold mb-6 text-gray-900">
+    Gestión de productos
+</h1>
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
+        <p class="text-sm text-gray-600">
+            Aquí puedes crear, editar o eliminar productos del catálogo.
+        </p>
+        <div class="flex flex-wrap gap-2">
+            <a href="{% url 'productos:panel_nuevo' %}"
+               class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
+                      bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm">
+                Nuevo producto
+            </a>
+
+            <!-- Botones de acciones masivas -->
+            <button type="submit" name="accion" value="activar"
+                    class="inline-flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-md
+                           border border-emerald-300 text-emerald-700 bg-white hover:bg-emerald-50">
+                Activar seleccionados
+            </button>
+
+            <button type="submit" name="accion" value="desactivar"
+                    class="inline-flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-md
+                           border border-amber-300 text-amber-700 bg-white hover:bg-amber-50">
+                Desactivar seleccionados
+            </button>
+
+            <button type="submit" name="accion" value="eliminar"
+                    onclick="return confirm('¿Seguro que quieres eliminar los productos seleccionados?');"
+                    class="inline-flex items-center px-3 py-2 text-xs sm:text-sm font-medium rounded-md
+                           border border-red-300 text-red-600 bg-white hover:bg-red-50">
+                Eliminar seleccionados
+            </button>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto bg-white shadow-sm rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-2">
+                        <input type="checkbox" id="select-all"
+                               class="h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                    </th>
+                    <th class="px-4 py-2 text-left font-semibold text-gray-700">Producto</th>
+                    <th class="px-4 py-2 text-left font-semibold text-gray-700">Categoría</th>
+                    <th class="px-4 py-2 text-right font-semibold text-gray-700">Precio</th>
+                    <th class="px-4 py-2 text-right font-semibold text-gray-700">Stock</th>
+                    <th class="px-4 py-2 text-center font-semibold text-gray-700">Estado</th>
+                    <th class="px-4 py-2 text-right font-semibold text-gray-700">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for producto in productos %}
+                    <tr>
+                        <td class="px-4 py-2">
+                            <input type="checkbox" name="productos" value="{{ producto.id }}"
+                                   class="fila-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                        </td>
+                        <td class="px-4 py-2">
+                            <div class="font-medium text-gray-900">
+                                {{ producto.nombre }}
+                            </div>
+                        </td>
+                        <td class="px-4 py-2 text-gray-600">
+                            {{ producto.categoria }}
+                        </td>
+                        <td class="px-4 py-2 text-right text-gray-900">
+                            {{ producto.precio|formato_pesos }}
+                        </td>
+                        <td class="px-4 py-2 text-right text-gray-900">
+                            {{ producto.stock }}
+                        </td>
+                        <td class="px-4 py-2 text-center">
+                            {% if producto.activo %}
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+                                    Activo
+                                </span>
+                            {% else %}
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-600">
+                                    Inactivo
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-2 text-right space-x-2">
+                            <a href="{% url 'productos:panel_editar' producto.id %}"
+                               class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded border
+                                      border-gray-300 text-gray-700 hover:bg-gray-50">
+                                Editar
+                            </a>
+                            <!-- Eliminación individual opcional, si quieres podrías quitarla -->
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7" class="px-4 py-4 text-center text-gray-600">
+                            No hay productos creados aún.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAll = document.getElementById('select-all');
+    if (!selectAll) return;
+
+    selectAll.addEventListener('change', function() {
+        document.querySelectorAll('.fila-checkbox').forEach(function(cb) {
+            cb.checked = selectAll.checked;
+        });
+    });
+});
+</script>
+{% endblock %}
+

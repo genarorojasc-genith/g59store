@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Administración{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-semibold mb-6 text-gray-900">
+    Panel de administración
+</h1>
+
+<p class="mb-4 text-gray-600">
+    Desde aquí puedes gestionar pedidos y, más adelante, acceder a análisis y otras herramientas internas.
+</p>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Card: Gestión de pedidos -->
+    <a href="{% url 'pedidos:panel_pedidos' %}"
+       class="block bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition">
+        <h2 class="text-lg font-semibold text-gray-900 mb-1">
+            Gestión de pedidos
+        </h2>
+        <p class="text-sm text-gray-600">
+            Ver pedidos pagados, marcarlos como enviados, entregados o fallidos.
+        </p>
+    </a>
+
+    <!-- Card: Gestión de productos -->
+    <a href="{% url 'productos:panel_productos' %}"
+       class="block bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition">
+        <h2 class="text-lg font-semibold text-gray-900 mb-1">
+            Gestión de productos
+        </h2>
+        <p class="text-sm text-gray-600">
+            Crear, editar o eliminar productos, manejar stock, precios e imágenes.
+        </p>
+    </a>
+
+    <a href="{% url 'paginas:panel_paginas' %}"
+    class="block bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition">
+        <h2 class="text-lg font-semibold text-gray-900 mb-1">
+            Textos de la tienda
+        </h2>
+        <p class="text-sm text-gray-600">
+            Editar políticas de envíos, cambios, contacto y otras páginas informativas.
+        </p>
+    </a>
+
+    <!-- Card: Análisis (placeholder futuro) -->
+    <div class="block bg-gray-50 rounded-xl border border-dashed border-gray-300 p-5">
+        <h2 class="text-lg font-semibold text-gray-700 mb-1">
+            Análisis (próximamente)
+        </h2>
+        <p class="text-sm text-gray-500">
+            Aquí podrás ver carritos abandonados, pendientes de pago, métricas y más.
+        </p>
+    </div>
+</div>
+{% endblock %}

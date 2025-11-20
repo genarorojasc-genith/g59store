@@ -1,0 +1,27 @@
+# ---- Django / Python ----
+*.log
+*.pot
+*.pyc
+*.db
+*$py.class
+__pycache__/
+db.sqlite3
+media/
+staticfiles/
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+.virtualenv/
+.env
+
+# VSCode
+.vscode/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/

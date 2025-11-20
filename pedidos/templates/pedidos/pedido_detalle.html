@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% load moneda %}
+
+{% block title %}Pedido #{{ pedido.id }}{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-semibold text-gray-900">
+        Pedido #{{ pedido.id }}
+    </h1>
+    <a href="{% url 'pedidos:mis_pedidos' %}"
+       class="text-sm text-emerald-700 hover:underline">
+        ← Volver a mis pedidos
+    </a>
+</div>
+
+<!-- Resumen del pedido -->
+<div class="grid gap-4 mb-6 md:grid-cols-2">
+    <div class="bg-white rounded-lg shadow-sm p-4">
+        <h2 class="text-sm font-semibold text-gray-700 mb-3">Resumen</h2>
+        <dl class="text-sm text-gray-700 space-y-1">
+            <div class="flex justify-between">
+                <dt class="font-medium">Fecha:</dt>
+                <dd>{{ pedido.creado|date:"d/m/Y H:i" }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="font-medium">Estado:</dt>
+                <dd>{{ pedido.get_estado_display }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="font-medium">Pagado:</dt>
+                <dd>{{ pedido.pagado|yesno:"Sí,No" }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="font-medium">Método de pago:</dt>
+                <dd>{{ pedido.get_metodo_pago_display|default:"-" }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="font-medium">Estado del pago:</dt>
+                <dd>{{ pedido.get_estado_pago_display }}</dd>
+            </div>
+        </dl>
+        <div class="mt-4 border-t pt-3 flex justify-between items-center">
+            <span class="text-sm font-medium text-gray-700">Total:</span>
+            <span class="text-lg font-semibold text-gray-900">
+                {{ pedido.total|formato_pesos }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Datos de envío -->
+    <div class="bg-white rounded-lg shadow-sm p-4">
+        <h2 class="text-sm font-semibold text-gray-700 mb-3">Datos de envío</h2>
+        {% if envio %}
+        <dl class="text-sm text-gray-700 space-y-1">
+            {# Ajusta estos campos a los que realmente tengas en DatosEnvio #}
+            <div class="flex justify-between">
+                <dt class="font-medium">Nombre:</dt>
+                <dd>{{ envio.nombre_recibe }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="font-medium">Dirección:</dt>
+                <dd>{{ envio.direccion_recibe }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="font-medium">Ciudad:</dt>
+                <dd>{{ envio.ciudad_recibe }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="font-medium">Teléfono:</dt>
+                <dd>{{ envio.telefono }}</dd>
+            </div>
+        </dl>
+        {% else %}
+        <p class="text-sm text-gray-500">
+            No hay datos de envío asociados a este pedido.
+        </p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Datos de factura -->
+<div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+    <h2 class="text-sm font-semibold text-gray-700 mb-3">Datos de factura</h2>
+    {% if factura %}
+    <dl class="text-sm text-gray-700 space-y-1">
+        {# Ajusta estos campos según tu modelo DatosFactura #}
+        <div class="flex justify-between">
+            <dt class="font-medium">Razón social:</dt>
+            <dd>{{ factura.razon_social }}</dd>
+        </div>
+        <div class="flex justify-between">
+            <dt class="font-medium">RUT:</dt>
+            <dd>{{ factura.rut_facturacion }}</dd>
+        </div>
+        <div class="flex justify-between">
+            <dt class="font-medium">Giro:</dt>
+            <dd>{{ factura.giro }}</dd>
+        </div>
+        <div class="flex justify-between">
+            <dt class="font-medium">Dirección:</dt>
+            <dd>{{ factura.direccion_facturacion }}</dd>
+        </div>
+    </dl>
+    {% else %}
+    <p class="text-sm text-gray-500">
+        Este pedido no tiene datos de factura.
+    </p>
+    {% endif %}
+</div>
+
+<!-- Detalle de productos -->
+<div class="bg-white rounded-lg shadow-sm overflow-hidden">
+    <h2 class="text-sm font-semibold text-gray-700 px-4 py-3 border-b">
+        Detalle del pedido
+    </h2>
+    <div class="overflow-x-auto">
+        <table class="min-w-full text-sm divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-4 py-2 text-left font-medium text-gray-500">Producto</th>
+                    <th class="px-4 py-2 text-right font-medium text-gray-500">Cantidad</th>
+                    <th class="px-4 py-2 text-right font-medium text-gray-500">Precio unitario</th>
+                    <th class="px-4 py-2 text-right font-medium text-gray-500">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-100">
+                {% for item in pedido.detalles.all %}
+                <tr>
+                    <td class="px-4 py-2 text-gray-700">
+                        {{ item.producto.nombre }}
+                    </td>
+                    <td class="px-4 py-2 text-right text-gray-700">
+                        {{ item.cantidad }}
+                    </td>
+                    <td class="px-4 py-2 text-right text-gray-700">
+                        {{ item.precio_unitario|formato_pesos }}
+                    </td>
+                    <td class="px-4 py-2 text-right font-medium text-gray-900">
+                        {{ item.subtotal|formato_pesos }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="px-4 py-4 text-center text-sm text-gray-500">
+                        Este pedido no tiene productos asociados.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

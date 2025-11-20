@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ pagina.titulo }}{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-semibold mb-4 text-gray-900">
+    {{ pagina.titulo }}
+</h1>
+
+<div class="prose max-w-none">
+    {{ pagina.contenido|linebreaks }}
+</div>
+{% endblock %}

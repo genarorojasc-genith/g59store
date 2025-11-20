@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar página{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-semibold mb-6 text-gray-900">
+    Editar página: {{ pagina.titulo }}
+</h1>
+
+<form method="post" class="max-w-3xl bg-white shadow-sm rounded-lg p-6 space-y-4">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <div class="flex gap-3 mt-4">
+        <button type="submit"
+                class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
+                       text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm">
+            Guardar
+        </button>
+        <a href="{% url 'paginas:panel_paginas' %}"
+           class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md
+                  border border-gray-300 text-gray-700 bg-white hover:bg-gray-50">
+            Cancelar
+        </a>
+    </div>
+</form>
+{% endblock %}

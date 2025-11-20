@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Textos de la tienda{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-semibold mb-6 text-gray-900">
+    Textos de la tienda
+</h1>
+
+<p class="mb-4 text-sm text-gray-600">
+    Aquí puedes editar las páginas informativas que se muestran en la tienda, como envíos, cambios y contacto.
+</p>
+
+<div class="overflow-x-auto bg-white shadow-sm rounded-lg">
+    <table class="min-w-full divide-y divide-gray-200 text-sm">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-4 py-2 text-left font-semibold text-gray-700">Slug</th>
+                <th class="px-4 py-2 text-left font-semibold text-gray-700">Título</th>
+                <th class="px-4 py-2 text-center font-semibold text-gray-700">Activo</th>
+                <th class="px-4 py-2 text-right font-semibold text-gray-700">Acciones</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+            {% for pagina in paginas %}
+                <tr>
+                    <td class="px-4 py-2 text-gray-500 font-mono">
+                        {{ pagina.slug }}
+                    </td>
+                    <td class="px-4 py-2 text-gray-900">
+                        {{ pagina.titulo }}
+                    </td>
+                    <td class="px-4 py-2 text-center">
+                        {% if pagina.activo %}
+                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+                                Activa
+                            </span>
+                        {% else %}
+                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-600">
+                                Inactiva
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-2 text-right">
+                        <a href="{% url 'paginas:editar_pagina' pagina.id %}"
+                           class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded border
+                                  border-gray-300 text-gray-700 hover:bg-gray-50">
+                            Editar
+                        </a>
+                        <a href="{% url 'paginas:ver' pagina.slug %}" target="_blank"
+                           class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded border
+                                  border-indigo-300 text-indigo-700 hover:bg-indigo-50">
+                            Ver
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4" class="px-4 py-4 text-center text-gray-600">
+                        Aún no has creado páginas informativas. Puedes crearlas desde el admin de Django por ahora.
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

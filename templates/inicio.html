@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}G59 Store{% endblock %}
+
+{% block content %}
+
+<!-- Banner principal -->
+<div class="bg-slate-900 text-white rounded-2xl shadow-lg px-8 py-10 mb-10
+            flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+    <div>
+        <h1 class="text-3xl md:text-4xl font-bold mb-3">
+            Bienvenido a G59 Store
+        </h1>
+        <p class="text-sm md:text-base text-slate-200 mb-6">
+            Tecnología y computación seleccionada para armar tu setup sin complicarte.
+        </p>
+
+        <a href="{% url 'productos:index' %}"
+           class="inline-flex items-center px-5 py-2.5 text-sm font-medium
+                  rounded-md bg-emerald-500 hover:bg-emerald-600
+                  text-white shadow">
+            Ver catálogo
+        </a>
+    </div>
+
+    <div class="text-sm text-slate-200 space-y-1">
+        <p>✔ Productos seleccionados</p>
+        <p>✔ Carrito y pedidos funcionando</p>
+        <p>✔ Pago online (pronto 😎)</p>
+    </div>
+</div>
+
+<!-- Productos destacados -->
+<h2 class="text-xl font-semibold text-gray-900 mb-4">
+    Productos destacados
+</h2>
+
+{% if productos_destacados %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for producto in productos_destacados %}
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col">
+                {% if producto.imagen %}
+                    <img src="{{ producto.imagen.url }}"
+                         alt="{{ producto.nombre }}"
+                         class="h-40 w-full object-cover">
+                {% else %}
+                    <div class="h-40 w-full bg-slate-100 flex items-center justify-center
+                                text-slate-400 text-sm">
+                        Sin imagen
+                    </div>
+                {% endif %}
+
+                <div class="p-4 flex flex-col flex-1">
+                    <h3 class="text-base font-semibold text-gray-900 mb-1">
+                        {{ producto.nombre }}
+                    </h3>
+                    <p class="text-sm text-gray-500 mb-2">
+                        {{ producto.categoria.nombre }}
+                    </p>
+                    <p class="text-lg font-bold text-emerald-600 mb-4">
+                        ${{ producto.precio }}
+                    </p>
+
+                    <div class="mt-auto flex items-center justify-between gap-2">
+                        <a href="{% url 'productos:detalle' producto.id %}"
+                           class="text-sm font-medium text-indigo-600 hover:text-indigo-700">
+                            Ver detalle
+                        </a>
+
+                        {% if producto.stock > 0 %}
+                            <form method="post"
+                                  action="{% url 'carrito:agregar' producto.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit"
+                                        class="text-xs px-3 py-1 rounded-md
+                                               bg-emerald-500 hover:bg-emerald-600
+                                               text-white font-medium">
+                                    Agregar
+                                </button>
+                            </form>
+                        {% else %}
+                            <span class="text-xs font-medium text-rose-500">
+                                Sin stock
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="text-gray-600">
+        Todavía no has marcado productos como destacados.
+        Cuando crees o edites uno, marca la casilla <strong>destacado</strong>.
+    </p>
+{% endif %}
+
+{% endblock %}
