@@ -29,6 +29,8 @@ SECRET_KEY = 'django-insecure-(2@gw-ry(bgub6@&$uxtvs+zi=p+(0$h_@&zvld5ua619##fkn
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    "g59store.cl",
+    "www.g59store.cl",
     "g59store-production.up.railway.app",
     ".railway.app",
     "localhost",
@@ -89,12 +91,16 @@ WSGI_APPLICATION = 'genith.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+import dj_database_url
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        ssl_require=False,  # en Railway interno no hace falta SSL
+    )
 }
+
 
 
 # Password validation
