@@ -42,6 +42,9 @@ CSRF_TRUSTED_ORIGINS = [
     "https://www.g59store.cl",
 ]
 
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+
 
 # Application definition
 
