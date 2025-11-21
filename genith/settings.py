@@ -37,6 +37,11 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://g59store.cl",
+    "https://www.g59store.cl",
+]
+
 
 # Application definition
 
