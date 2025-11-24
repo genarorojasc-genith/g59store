@@ -42,6 +42,7 @@ def send_email(to_email, subject, template_name, context):
     template_name: 'emails/pedido_confirmacion.html', etc.
     """
     if not settings.MAILGUN_API_KEY or not settings.MAILGUN_DOMAIN:
+        raise RuntimeError("Mailgun no configurado: faltan MAILGUN_API_KEY o MAILGUN_DOMAIN")
         logger.error("Mailgun no configurado. Falta API_KEY o DOMAIN.")
         return False
 
