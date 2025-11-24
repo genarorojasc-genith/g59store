@@ -8,7 +8,7 @@ from django.contrib import messages
 from pedidos.models import Pedido
 from carrito.cart import Cart
 
-from pedidos.email_utils import enviar_correo_confirmacion_pedido
+from common.email_utils import send_email
 
 
 
@@ -52,6 +52,33 @@ def pagar_mercadopago(request, pedido_id):
         )
 
     return redirect(checkout_url)
+
+
+
+def enviar_correo_confirmacion_pedido(pedido):
+    """
+    Envía el correo de confirmación de pedido usando la función común send_email.
+    Intenta usar el email del cliente asociado al pedido.
+    """
+    # buscamos un correo razonable
+    to_email = None
+
+    cliente = getattr(pedido, "cliente", None)
+    if cliente and getattr(cliente, "email", None):
+        to_email = cliente.email
+    elif getattr(pedido, "email", None):
+        to_email = pedido.email
+
+    if not to_email:
+        # si no hay correo, no intentamos mandar nada
+        return
+
+    send_email(
+        to_email=to_email,
+        subject=f"Confirmación de compra #{pedido.id}",
+        template_name="emails/pedido_confirmacion.html",
+        context={"pedido": pedido},
+    )
 
 
 
