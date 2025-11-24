@@ -10,13 +10,16 @@ from django.contrib.auth.tokens import default_token_generator
 from .forms import RegistroForm, PerfilForm, PerfilFacturacionForm
 from .models import Perfil, PerfilFacturacion
 
+from common.email_utils import send_email
+
+
+
 
 def registrarse(request):
     if request.method == 'POST':
         form = RegistroForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            # cuenta desactivada hasta que confirme por correo
             user.is_active = False
             user.save()
 
@@ -26,27 +29,20 @@ def registrarse(request):
 
             domain = request.get_host()
             protocol = 'https' if request.is_secure() else 'http'
+            activation_link = f"{protocol}://{domain}/usuarios/activar/{uid}/{token}/"
 
-            activation_link = (
-                f"{protocol}://{domain}"
-                f"/usuarios/activar/{uid}/{token}/"
+            # enviar correo vía Mailgun usando la función común
+            send_email(
+                to_email=user.email,
+                subject='Activa tu cuenta en G59 Store',
+                template_name='emails/activar_cuenta.html',
+                context={
+                    'user': user,
+                    'activation_link': activation_link,
+                },
             )
 
-            subject = "Activa tu cuenta en G59 Store"
-            message = (
-                f"Hola,\n\n"
-                f"Para activar tu cuenta haz clic en el siguiente enlace:\n\n"
-                f"{activation_link}\n\n"
-                f"Si tú no creaste esta cuenta, puedes ignorar este correo."
-            )
-
-            # envía al email del usuario
-            user.email_user(subject, message)
-
-            messages.success(
-                request,
-                'Cuenta creada. Revisa tu correo para activarla.'
-            )
+            messages.success(request, 'Cuenta creada. Revisa tu correo para activarla.')
             return redirect('login')
     else:
         form = RegistroForm()

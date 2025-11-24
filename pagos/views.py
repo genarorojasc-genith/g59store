@@ -8,6 +8,9 @@ from django.contrib import messages
 from pedidos.models import Pedido
 from carrito.cart import Cart
 
+from pedidos.email_utils import enviar_correo_confirmacion_pedido
+
+
 
 def pagar_mercadopago(request, pedido_id):
     pedido = get_object_or_404(Pedido, id=pedido_id, pagado=False)
@@ -51,6 +54,8 @@ def pagar_mercadopago(request, pedido_id):
     return redirect(checkout_url)
 
 
+
+
 def mp_exito(request):
     """
     Mercado Pago redirige acá cuando el pago se aprueba.
@@ -59,7 +64,6 @@ def mp_exito(request):
     pedido_id = request.session.get("checkout_pedido_id")
 
     if not pedido_id:
-        # No encontramos el pedido en la sesión, pero al menos no rompemos todo
         return HttpResponse(
             "Pago aprobado, pero no se encontró un pedido en sesión.",
             status=200,
@@ -73,6 +77,9 @@ def mp_exito(request):
     pedido.pagado = True
     pedido.transaccion_id = payment_id or f"mp-sim-{pedido.id}"
     pedido.save()
+
+    # 🔔 Enviar correo de confirmación de pedido
+    enviar_correo_confirmacion_pedido(pedido)
 
     cart = Cart(request)
     cart.clear()
