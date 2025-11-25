@@ -1,4 +1,3 @@
-# common/email_utils.py
 
 import logging
 import requests
