@@ -29,6 +29,7 @@ urlpatterns = [
     path('pagos/', include('pagos.urls')),
     path('panel/', include('panel.urls')),
     path('paginas/', include('paginas.urls')),
+    path("prueba-email/", productos_views.prueba_email, name="prueba_email"),
 ]
 
 

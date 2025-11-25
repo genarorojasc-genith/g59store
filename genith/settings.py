@@ -195,3 +195,24 @@ MAILGUN_API_KEY = os.environ.get("MAILGUN_API_KEY")
 MAILGUN_DOMAIN = os.environ.get("MAILGUN_DOMAIN")
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 
+
+
+
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
+
+DEFAULT_FROM_EMAIL = os.getenv(
+    "DEFAULT_FROM_EMAIL",
+    "G59 Store <no-reply@g59store.cl>",
+)
+
+DEBUG = os.getenv("DJANGO_DEBUG", "True") == "True"
+
+if DEBUG:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = "smtp.sendgrid.net"
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = "apikey"  # literal
+    EMAIL_HOST_PASSWORD = SENDGRID_API_KEY

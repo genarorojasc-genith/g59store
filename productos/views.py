@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Producto, Categoria
 from .forms import ProductoForm
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponse
 
 from django.db.models.deletion import ProtectedError
 from django.contrib import messages
@@ -163,3 +163,21 @@ def eliminar_producto(request, producto_id):
             )
 
     return redirect('productos:panel_productos')
+
+
+
+
+
+
+from django.core.mail import send_mail
+from django.conf import settings
+
+def prueba_email(request):
+    send_mail(
+        subject="Prueba SendGrid",
+        message="Hola, este es un correo de prueba desde Django.",
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=["genarorojasc@gmail.com"],
+        fail_silently=False,
+    )
+    return HttpResponse("Correo de prueba enviado.")
