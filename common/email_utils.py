@@ -60,5 +60,3 @@ def send_email(to_email, subject, template_name, context):
         return False
 
 
-
-alguna_app/views.py
