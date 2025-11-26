@@ -31,8 +31,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "g59store.cl",
     "www.g59store.cl",
-    "g59store-production.up.railway.app",
-    ".railway.app",
+    "g59store.onrender.com",
     "localhost",
     "127.0.0.1",
 ]
@@ -158,6 +157,9 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+# Opcional pero útil
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -198,21 +200,31 @@ DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 
 
 
-SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
+# SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 
-DEFAULT_FROM_EMAIL = os.getenv(
-    "DEFAULT_FROM_EMAIL",
-    "G59 Store <no-reply@g59store.cl>",
-)
+# DEFAULT_FROM_EMAIL = os.getenv(
+#     "DEFAULT_FROM_EMAIL",
+#     "G59 Store <no-reply@g59store.cl>",
+# )
 
-DEBUG = os.getenv("DJANGO_DEBUG", "True") == "True"
+# DEBUG = os.getenv("DJANGO_DEBUG", "True") == "True"
 
-if DEBUG:
-    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-else:
-    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-    EMAIL_HOST = "smtp.sendgrid.net"
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = "apikey"  # literal
-    EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
+# if DEBUG:
+#     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# else:
+#     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+#     EMAIL_HOST = "smtp.sendgrid.net"
+#     EMAIL_PORT = 587
+#     EMAIL_USE_TLS = True
+#     EMAIL_HOST_USER = "apikey"  # literal
+#     EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
+
+
+
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+
+SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
+
+SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
