@@ -14,6 +14,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,14 +32,16 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "g59store.cl",
     "www.g59store.cl",
-    "g59store.onrender.com",
+    # "g59store.onrender.com",
     "localhost",
     "127.0.0.1",
+    "g59store-production.up.railway.app",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://g59store.cl",
     "https://www.g59store.cl",
+    "https://g59store-production.up.railway.app",
 ]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -207,10 +210,12 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "no-reply@g59store.cl")
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-import dj_database_url
+
 
 DATABASES = {
     "default": dj_database_url.config(
-        default=os.environ["DATABASE_URL"]
+        default=os.getenv("DATABASE_URL", "sqlite:///db.sqlite3"),
+        conn_max_age=600,
     )
 }
+

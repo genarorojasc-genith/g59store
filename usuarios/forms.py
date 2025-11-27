@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from .models import Perfil, PerfilFacturacion
 
 
+
 class RegistroForm(UserCreationForm):
     email = forms.EmailField(
         required=True,
@@ -134,3 +135,4 @@ class PerfilFacturacionForm(forms.ModelForm):
             perfil_fact.save()
 
         return perfil_fact
+
