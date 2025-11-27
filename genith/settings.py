@@ -174,8 +174,7 @@ LOGIN_REDIRECT_URL = '/'
 # Opcional: después de logout, también al home
 LOGOUT_REDIRECT_URL = '/'
 
-# En desarrollo: los correos se muestran en la consola
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 
 
 MP_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN")
@@ -191,38 +190,24 @@ STORAGES = {
 }
 
 
-MAILGUN_API_KEY = os.environ.get("MAILGUN_API_KEY")
-MAILGUN_DOMAIN = os.environ.get("MAILGUN_DOMAIN")
-DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 
 
 
 
-# SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 
-# DEFAULT_FROM_EMAIL = os.getenv(
-#     "DEFAULT_FROM_EMAIL",
-#     "G59 Store <no-reply@g59store.cl>",
-# )
+#  SENDGRID VIA SMTP
 
-# DEBUG = os.getenv("DJANGO_DEBUG", "True") == "True"
-
-# if DEBUG:
-#     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-# else:
-#     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-#     EMAIL_HOST = "smtp.sendgrid.net"
-#     EMAIL_PORT = 587
-#     EMAIL_USE_TLS = True
-#     EMAIL_HOST_USER = "apikey"  # literal
-#     EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
+# EMAIL_HOST = "smtp.sendgrid.net"
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = "apikey"
+# EMAIL_HOST_PASSWORD = os.getenv("SENDGRID_API_KEY")
 
 
-
+# SENDGRID VIA API
 EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
-
 SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
-
 SENDGRID_SANDBOX_MODE_IN_DEBUG = False
 
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
+# con fallback por si acaso
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "no-reply@g59store.cl")
