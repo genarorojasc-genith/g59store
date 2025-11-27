@@ -13,6 +13,8 @@ from .models import Perfil, PerfilFacturacion
 from common.email_utils import send_email
 from django.db import IntegrityError
 
+from django.urls import reverse  # <-- arriba del archivo
+
 def registrarse(request):
     if request.method == 'POST':
         form = RegistroForm(request.POST)
@@ -22,7 +24,6 @@ def registrarse(request):
                 user.is_active = False
                 user.save()
             except IntegrityError:
-                # por si algo extraño se cuela igual
                 form.add_error('email', 'Ya existe una cuenta con este correo.')
             else:
                 uid = urlsafe_base64_encode(force_bytes(user.pk))
@@ -30,7 +31,16 @@ def registrarse(request):
 
                 domain = request.get_host()
                 protocol = 'https' if request.is_secure() else 'http'
-                activation_link = f"{protocol}://{domain}/usuarios/activar/{uid}/{token}/"
+
+                # 🔴 ANTES: armabas la URL a mano con /usuarios/...
+                # activation_link = f"{protocol}://{domain}/usuarios/activar/{uid}/{token}/"
+
+                # ✅ AHORA: dejamos que Django construya el path correcto
+                path_activacion = reverse(
+                    'activar_cuenta',
+                    kwargs={'uidb64': uid, 'token': token}
+                )
+                activation_link = f"{protocol}://{domain}{path_activacion}"
 
                 send_email(
                     to_email=user.email,
@@ -48,6 +58,7 @@ def registrarse(request):
         form = RegistroForm()
 
     return render(request, 'usuarios/registrarse.html', {'form': form})
+
 
 
 
