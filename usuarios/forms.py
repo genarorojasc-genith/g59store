@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-
+from django.core.exceptions import ValidationError
 from .models import Perfil, PerfilFacturacion
 
 
@@ -35,12 +35,13 @@ class RegistroForm(UserCreationForm):
         fields = ['email', 'password1', 'password2']
 
     def clean_email(self):
-        """
-        De momento NO comprobamos duplicados para poder probar
-        el registro + envío de email sin que salte el error.
-        Luego reactivamos la validación.
-        """
         email = self.cleaned_data.get('email', '').strip().lower()
+
+        # ✅ aquí SÍ validamos que no exista antes
+        if User.objects.filter(username=email).exists() \
+           or User.objects.filter(email=email).exists():
+            raise ValidationError("Ya existe una cuenta con este correo.")
+
         return email
 
     def save(self, commit=True):

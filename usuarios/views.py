@@ -11,43 +11,44 @@ from .forms import RegistroForm, PerfilForm, PerfilFacturacionForm
 from .models import Perfil, PerfilFacturacion
 
 from common.email_utils import send_email
-
-
-
+from django.db import IntegrityError
 
 def registrarse(request):
     if request.method == 'POST':
         form = RegistroForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False
-            user.save()
+            try:
+                user = form.save(commit=False)
+                user.is_active = False
+                user.save()
+            except IntegrityError:
+                # por si algo extraño se cuela igual
+                form.add_error('email', 'Ya existe una cuenta con este correo.')
+            else:
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                token = default_token_generator.make_token(user)
 
-            # generar link de activación
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-            token = default_token_generator.make_token(user)
+                domain = request.get_host()
+                protocol = 'https' if request.is_secure() else 'http'
+                activation_link = f"{protocol}://{domain}/usuarios/activar/{uid}/{token}/"
 
-            domain = request.get_host()
-            protocol = 'https' if request.is_secure() else 'http'
-            activation_link = f"{protocol}://{domain}/usuarios/activar/{uid}/{token}/"
+                send_email(
+                    to_email=user.email,
+                    subject='Activa tu cuenta en G59 Store',
+                    template_name='emails/activar_cuenta.html',
+                    context={
+                        'user': user,
+                        'activation_link': activation_link,
+                    },
+                )
 
-            # enviar correo vía Mailgun usando la función común
-            send_email(
-                to_email=user.email,
-                subject='Activa tu cuenta en G59 Store',
-                template_name='emails/activar_cuenta.html',
-                context={
-                    'user': user,
-                    'activation_link': activation_link,
-                },
-            )
-
-            messages.success(request, 'Cuenta creada. Revisa tu correo para activarla.')
-            return redirect('login')
+                messages.success(request, 'Cuenta creada. Revisa tu correo para activarla.')
+                return redirect('login')
     else:
         form = RegistroForm()
 
     return render(request, 'usuarios/registrarse.html', {'form': form})
+
 
 
 def activar_cuenta(request, uidb64, token):
