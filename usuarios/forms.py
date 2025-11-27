@@ -5,50 +5,38 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import Perfil, PerfilFacturacion
 
 
+
 class RegistroForm(UserCreationForm):
     email = forms.EmailField(
+        label="Correo electrónico",
         required=True,
-        label="Correo electrónico"
-    )
-
-    password1 = forms.CharField(
-        label="Contraseña",
-        widget=forms.PasswordInput(attrs={'class': 'input-borde'}),
-        help_text=(
-            "<ul class='text-xs text-gray-500 mt-1 list-disc pl-4'>"
-            "<li>Debe contener al menos 8 caracteres.</li>"
-            "<li>No puede ser muy similar a tu información personal.</li>"
-            "<li>No puede ser una contraseña de uso común.</li>"
-            "<li>No puede ser completamente numérica.</li>"
-            "</ul>"
-        )
-    )
-
-    password2 = forms.CharField(
-        label="Confirmar contraseña",
-        widget=forms.PasswordInput(attrs={'class': 'input-borde'}),
-        help_text="<p class='text-xs text-gray-500 mt-1'>Repite la misma contraseña para verificarla.</p>"
     )
 
     class Meta:
         model = User
-        fields = ['email', 'password1', 'password2']
+        # Si usas el correo como usuario, no necesitas pedir username aparte
+        fields = ("email", "password1", "password2")
 
     def clean_email(self):
-        email = self.cleaned_data['email'].lower()
+        email = self.cleaned_data.get("email", "").lower()
+
+        # validamos SOLO contra auth_user
         if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError("Ya existe una cuenta con este correo.")
+
         return email
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        email = self.cleaned_data['email'].lower()
+        email = self.cleaned_data["email"].lower()
+
+        # usamos el email como username
         user.username = email
         user.email = email
+
         if commit:
             user.save()
         return user
-
 
 
 class PerfilForm(forms.ModelForm):
