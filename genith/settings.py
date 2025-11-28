@@ -170,6 +170,7 @@ LOGOUT_REDIRECT_URL = '/'
 
 
 
+MP_PUBLIC_KEY = os.getenv("MP_PUBLIC_KEY", "")
 MP_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN")
 
 

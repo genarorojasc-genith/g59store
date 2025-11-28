@@ -9,12 +9,21 @@ from pedidos.models import Pedido
 from carrito.cart import Cart
 
 from common.email_utils import send_email
+from django.shortcuts import render
 
 
 
 def pagar_mercadopago(request, pedido_id):
     pedido = get_object_or_404(Pedido, id=pedido_id, pagado=False)
+    # Guardamos el id del pedido en sesión para las vistas de exito/fallo/pendiente
+    request.session["checkout_pedido_id"] = pedido.id
 
+    # Si tu modelo Pedido tiene campo metodo_pago, lo dejamos seteado
+    if hasattr(pedido, "metodo_pago"):
+        pedido.metodo_pago = "mercadopago"
+        pedido.save(update_fields=["metodo_pago"])
+
+    # SDK Mercado Pago con el Access Token de settings
     sdk = mercadopago.SDK(settings.MP_ACCESS_TOKEN)
 
     preference_data = {
@@ -112,7 +121,8 @@ def mp_exito(request):
     cart.clear()
 
     messages.success(request, "Tu pago en Mercado Pago fue aprobado.")
-    return HttpResponse(f"Pago aprobado. Pedido #{pedido.id} marcado como pagado.")
+    return render(request, "pagos/mercadopago_exito.html", {"pedido": pedido})
+
 
 
 def mp_fallo(request):
@@ -128,6 +138,7 @@ def mp_fallo(request):
 
     messages.error(request, "Tu pago fue rechazado o hubo un problema.")
     return HttpResponse("Pago fallido.")
+
 
 
 def mp_pendiente(request):
@@ -161,4 +172,4 @@ def transbank_iniciar(request, pedido_id):
     cart = Cart(request)
     cart.clear()
 
-    return HttpResponse(f"Pago Transbank simulado OK para pedido #{pedido.id}.")
+    return render(request, "pagos/transbank_exito.html", {"pedido": pedido})
