@@ -97,6 +97,7 @@ def mp_exito(request):
     Mercado Pago redirige acá cuando el pago se aprueba.
     Marcamos el pedido como pagado y vaciamos el carrito.
     """
+    
     pedido_id = request.session.get("checkout_pedido_id")
 
     if not pedido_id:

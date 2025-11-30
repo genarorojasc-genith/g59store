@@ -174,6 +174,15 @@ MP_PUBLIC_KEY = os.getenv("MP_PUBLIC_KEY")
 MP_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN")
 
 
+# Comisiones de medios de pago
+METODO_PAGO_COMISIONES = {
+    'transferencia': 0.0,    # 0%
+    'mercadopago': 0.0289,   # 1.69%
+}
+
+
+
+
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",

@@ -208,6 +208,14 @@ def pedido_crear(request):
         # 2) Guardar método de pago en el pedido
         pedido = f_pedido.save(commit=False)
 
+        metodo = pedido.metodo_pago
+        comision = settings.METODO_PAGO_COMISIONES.get(metodo, 0)
+
+        subtotal = pedido.total or 0
+        total_final = round(subtotal * (1 + comision))
+
+        pedido.total = total_final
+
         # Enlazar al pedido
         pedido.cliente = cliente
 
@@ -227,9 +235,6 @@ def pedido_crear(request):
         pedido.estado_pago = 'pendiente'
         pedido.pagado = False
         pedido.save()
-
-        # 6) Vaciar el carrito
-        cart.clear()
 
         # 7) Enviar a la pasarela según método
         metodo = pedido.metodo_pago
