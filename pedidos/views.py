@@ -1,3 +1,4 @@
+from decimal import Decimal
 from urllib import request
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -209,10 +210,10 @@ def pedido_crear(request):
         pedido = f_pedido.save(commit=False)
 
         metodo = pedido.metodo_pago
-        comision = settings.METODO_PAGO_COMISIONES.get(metodo, 0)
 
-        subtotal = pedido.total or 0
-        total_final = round(subtotal * (1 + comision))
+        comision = settings.METODO_PAGO_COMISIONES.get(metodo, 0)
+        subtotal = pedido.total or Decimal ('0')
+        total_final = (subtotal * (Decimal('1') + comision)).quantize(Decimal('1'))
 
         pedido.total = total_final
 
