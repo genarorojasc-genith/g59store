@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+from decimal import Decimal
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -177,7 +178,7 @@ MP_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN")
 # Comisiones de medios de pago
 METODO_PAGO_COMISIONES = {
     'transferencia': 0.0,    # 0%
-    'mercadopago': 0.0289,   # 1.69%
+    'mercadopago': Decimal('0.0289')   # 1.69%
 }
 
 

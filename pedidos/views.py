@@ -211,9 +211,11 @@ def pedido_crear(request):
 
         metodo = pedido.metodo_pago
 
-        comision = settings.METODO_PAGO_COMISIONES.get(metodo, 0)
-        subtotal = pedido.total or Decimal ('0')
-        total_final = (subtotal * (Decimal('1') + comision)).quantize(Decimal('1'))
+        comision = settings.METODO_PAGO_COMISIONES.get(metodo, Decimal('0'))
+        subtotal = pedido.total or Decimal('0')
+
+        factor = Decimal('1') + comision
+        total_final = (subtotal * factor).quantize(Decimal('1'))
 
         pedido.total = total_final
 
