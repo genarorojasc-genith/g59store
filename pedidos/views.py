@@ -165,10 +165,13 @@ def pedido_crear(request):
         pedido.cliente = cliente
         pedido.save(update_fields=['cliente'])
 
+    envio_existente = DatosEnvio.objects.filter(pedido=pedido).first()
+    factura_existente = DatosFactura.objects.filter(pedido=pedido).first()
+
     if request.method == 'POST':
         f_cliente = ClienteEmailForm(request.POST, instance=cliente)
-        f_envio   = DatosEnvioForm(request.POST)
-        f_fact    = DatosFacturaForm(request.POST)
+        f_envio   = DatosEnvioForm(request.POST, instance=envio_existente)
+        f_fact    = DatosFacturaForm(request.POST, instance=factura_existente)
         f_pedido  = PedidoPagoForm(request.POST, instance=pedido)
 
         requiere_factura = f_fact.data.get('requiere_factura') == 'on'
@@ -250,10 +253,10 @@ def pedido_crear(request):
         return redirect('pedidos:pedido_crear')
 
     else:
-        # GET: solo mostrar los forms
+        # GET: prellenar con lo que exista
         f_cliente = ClienteEmailForm(instance=cliente)
-        f_envio   = DatosEnvioForm()
-        f_fact    = DatosFacturaForm()
+        f_envio   = DatosEnvioForm(instance=envio_existente)
+        f_fact    = DatosFacturaForm(instance=factura_existente)
         f_pedido  = PedidoPagoForm(instance=pedido)
 
     return render(request, 'pedidos/pedido_crear.html', {

@@ -97,7 +97,7 @@ def mp_exito(request):
     Mercado Pago redirige acá cuando el pago se aprueba.
     Marcamos el pedido como pagado y vaciamos el carrito.
     """
-    
+
     pedido_id = request.session.get("checkout_pedido_id")
 
     if not pedido_id:
@@ -138,7 +138,7 @@ def mp_fallo(request):
         pedido.save()
 
     messages.error(request, "Tu pago fue rechazado o hubo un problema.")
-    return HttpResponse("Pago fallido.")
+    return redirect('pedidos:pedido_crear')
 
 
 
